@@ -3,45 +3,47 @@ import cv2
 MAX_INDEX_TO_TRY = 5
 
 def try_camera(index: int) -> bool:
-    cap = cv2.VideoCapture(index)
+    cam = cv2.VideoCapture(index) # Conection to a camara with a index
 
-    if not cap.isOpened():
-        print(f"Índice {index}: no se pudo abrir")
+    if not cam.isOpened():
+        print(f"Index {index}: Could not open")
         return False
 
-    print(f"Índice {index}: cámara abierta correctamente")
-    print("  Pulsa 'n' para probar el siguiente índice, 'q' para salir del todo")
+    print(f"Index {index}: camera opened correctly")
+    print("  Press 'n' for the next index, 'q' for quit")
 
     while True:
-        ret, frame = cap.read()
+        #ret (bool) : True if the frame is took correctly
+        ret, frame = cam.read() # request a frame
         if not ret:
-            print(f"  Índice {index}: no llegan frames")
+            print(f"  iNDEX {index}: not receiving frames")
             break
 
-        cv2.putText(frame, f"Camara index: {index}  (n=siguiente, q=salir)",
+        # Add text to the frame    
+        cv2.putText(frame, f"Camera index: {index}  (n=next, q=quit)",
                     (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
-        cv2.imshow("Buscador de camara", frame)
+        cv2.imshow("Camera searcher", frame) #show window
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
-            cap.release()
+            cam.release()
             cv2.destroyAllWindows()
-            return True
+            return True # Finished all
         elif key == ord("n"):
-            break
+            break #finished with this camera
 
-    cap.release()
+    cam.release()
     cv2.destroyAllWindows()
     return False
 
 
 def main():
-    print("Buscando cámaras disponibles...\n")
+    print("Searching available cameras...\n")
     for index in range(MAX_INDEX_TO_TRY):
         if try_camera(index):
-            print("\nSaliendo.")
+            print("\nLeaving.")
             return
-    print("\nProbados todos los índices.")
+    print("\nAll index tested.")
 
 
 if __name__ == "__main__":
